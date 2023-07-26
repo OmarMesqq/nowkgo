@@ -1,25 +1,28 @@
 import socket 
 
 def tostr(bytes):
+    """ 
+    Converte bytes para string
+    """
     return bytes.decode('utf-8')
 
 # Cria socket do servidor 
 server = socket.socket() 
 
-# Binda o socket a uma porta
-server.bind(("127.0.0.1", 9001)) # Trava a porta para o script do server 
+# Binda (trava) o socket a uma porta
+server.bind(("127.0.0.1", 9001)) 
 
 # Fica escutando por conexões 
 server.listen() 
 
-# Pega o objeto de conexão e o endereço do cliente / bloqueante 
+# Pega o objeto de conexão e o endereço do cliente -> bloqueante 
 conn, addr = server.accept() 
 
 print(f"Novo cliente conectado: {addr}\n") # Isso fica aqui? 
 
 while True: 
-    # Recebe a mensagem do cliente 
-    msg = conn.recv(1024) # Bloqueante 
+    # Recebe a mensagem do cliente -> Bloqueante
+    msg = conn.recv(1024)  
 
     # Se o cliente fechar a conexão, o recv retorna uma string vazia 
     if not msg: 
