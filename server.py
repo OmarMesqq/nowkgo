@@ -41,7 +41,8 @@ while True:
     print(f"Cliente diz: {msg}") 
 
     # Envia uma mensagem de volta 
-    conn.sendall(b"A galinha! KKKKKKKKKKKKK trolei\n")
+    conn.sendall(b"A galinha! KKKKKKKKKKKKK trollei\n")
 
     # Fecha a conexão 
     conn.close() 
+    break
