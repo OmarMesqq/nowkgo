@@ -1,5 +1,6 @@
 import socket 
 import threading
+from punchlines import getPunchline
 
 HOST = "127.0.0.1"
 
@@ -57,8 +58,8 @@ def handle_client(conn, addr, count):
         msg = tostr(msg)
         print(f"[*] Cliente {count} diz: {msg}") 
 
-        # Envia a punchline de volta 
-        conn.sendall(b"A galinha! KKKKKKKKKKKKK trollei\n\n")
+        # Envia a punchline de volta
+        conn.sendall(getPunchline())
 
         # Fecha a conexão 
         conn.close() 
