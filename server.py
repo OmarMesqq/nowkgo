@@ -1,4 +1,7 @@
 import socket 
+import threading
+
+HOST = "127.0.0.1"
 
 def tostr(bytes):
     """ 
@@ -6,43 +9,66 @@ def tostr(bytes):
     """
     return bytes.decode('utf-8')
 
-# Cria socket do servidor 
-server = socket.socket() 
 
-# Binda (trava) o socket a uma porta
-server.bind(("127.0.0.1", 9001)) 
+def grabPort(server, port):
+    """    
+    Tenta bindar o socket do servidor à porta fornecida. 
+    Caso esteja ocupada, tenta a próxima disponível.
+    """
+    try:
+        server.bind((HOST,port))
+        print(f"[*] Esperando conexões em {HOST}:{port}") 
+        return  
+    except OSError:
+        port += 1 
+        grabPort(server, port) 
 
-# Fica escutando por conexões 
-server.listen() 
 
-# Pega o objeto de conexão e o endereço do cliente -> bloqueante 
-conn, addr = server.accept() 
+def main(): 
+    """
+    Inicializa o servidor
+    """
+    port = 9001
+    
+    server = socket.socket() 
+    grabPort(server, port)
 
-print(f"Novo cliente conectado: {addr}\n") # Isso fica aqui? 
+    server.listen(50) 
+    count = 0
 
-while True: 
-    # Recebe a mensagem do cliente -> Bloqueante
-    msg = conn.recv(1024)  
+    while True: 
+        conn, addr = server.accept()
+        count += 1
+        threading.Thread(target=handle_client, args=(conn, addr, count)).start()
+        
+        
+def handle_client(conn, addr, count):
+    """
+    Lida com a conexão de um cliente
+    """
+    print(f"[*] Cliente local novo na porta {addr[1]}")
 
-    # Se o cliente fechar a conexão, o recv retorna uma string vazia 
-    if not msg: 
-        break 
+    while True:
+        # Inicia a conversa
+        conn.sendall(b"\nToc Toc\n") 
 
-    # Converte a mensagem de bytes para string e a mostra no console server side
-    msg = tostr(msg) 
-    print(f"Cliente diz: {msg}") 
+        # Espera e processa a próxima mensagem (bloqueante)
+        msg = conn.recv(1024) 
+        msg = tostr(msg)
+        print(f"[*] Cliente {count} diz: {msg}") 
 
-    # Envia uma mensagem de volta
-    conn.sendall(b"Toc toc\n") 
+        # Envia a punchline de volta 
+        conn.sendall(b"A galinha! KKKKKKKKKKKKK trollei\n\n")
 
-    # Espera e processa a próxima mensagem 
-    msg = conn.recv(1024) 
-    msg = tostr(msg)
-    print(f"Cliente diz: {msg}") 
+        # Fecha a conexão 
+        conn.close() 
+        print(f"[*] Conexão com cliente {addr} terminou com sucesso")
+        break
 
-    # Envia uma mensagem de volta 
-    conn.sendall(b"A galinha! KKKKKKKKKKKKK trollei\n")
 
-    # Fecha a conexão 
-    conn.close() 
-    break
+if __name__ == '__main__':
+    try:
+        main() 
+    except KeyboardInterrupt: 
+        print("\n[*] Saindo...")
+        exit(0)
