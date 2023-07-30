@@ -1,6 +1,6 @@
 ## Um servidor de piadas estilo *toc toc* 
 
-### O código gera um socket que se liga a porta 9001 ou acima e age como servidor local. Os clientes - também locais<sup>[1]</sup> - se conectam a ela por [`telnet`](https://en.wikipedia.org/wiki/Telnet). 
+### O código cria um socket que se liga a porta 9001 ou acima e age como servidor local. Os clientes - também locais<sup>[1]</sup> - se conectam a ela por [`telnet`](https://en.wikipedia.org/wiki/Telnet). 
 
 ### Como utilizar:
 1 - `git clone https://github.com/OmarMesqq/socketcom` 
@@ -17,7 +17,7 @@
 ### São utilizados os módulos `socket` e `threading` do Python. O primeiro para a comunicação entre cliente e servidor e o segundo para a criação de threads que permitem que o servidor atenda a mais de um cliente simultaneamente. Dessa forma, o programa pode ser executado sem módulos externos ou ambientes virtuais.
 
 
-### Em tese, o número de clientes simultâneos é limitado apenas pela capacidade de processamento da máquina. Para alterar a capacidade máxima de clientes máximos simultâneos, altere a seguinte linha de código: 
+### Em tese, o número de clientes simultâneos é limitado apenas pela capacidade da máquina. Para alterar a capacidade máxima de clientes simultâneos, altere a seguinte linha de código: 
 <br>
 
 ```python 
