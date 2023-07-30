@@ -16,4 +16,7 @@ punchlines = [
 random_punchline = f"{random.choice(punchlines)}" + "\n\n"
 
 def getPunchline() -> bytes:
+    """
+    Retorna uma punchline aleatória em bytes (UTF-8)
+    """
     return random_punchline.encode('utf-8')
