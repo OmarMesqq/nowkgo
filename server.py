@@ -34,7 +34,7 @@ def main():
     server = socket.socket() 
     grabPort(server, port)
 
-    server.listen(50) 
+    server.listen(50)     # Avaliar backlog e conexões simultâneas
     count = 0
 
     while True: 
@@ -49,12 +49,12 @@ def handle_client(conn, addr, count):
     """
     print(f"[*] Cliente local novo na porta {addr[1]}")
 
-    while True:
+    while True:    # não precisa desse laço
         # Inicia a conversa
         conn.sendall(b"\nToc Toc\n") 
 
         # Espera e processa a próxima mensagem (bloqueante)
-        msg = conn.recv(1024) 
+        msg = conn.recv(1024)     # Timeout p/ espera
         msg = tostr(msg)
         print(f"[*] Cliente {count} diz: {msg}") 
 
@@ -73,3 +73,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt: 
         print("\n[*] Saindo...")
         exit(0)
+
+# Sistema de filas do teatro
