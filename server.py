@@ -33,7 +33,7 @@ def main():
     server = socket.socket() 
     grabPort(server, port)
 
-    server.listen(50)     # Avaliar backlog e conexões simultâneas
+    server.listen(3)     
     print(f"[*] Esperando conexões em {HOST}:{port}")
     count = 0
 
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     # Implementar disconnect message (com while ou return)
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
+    # Avaliar backlog e conexões simultâneas no server.listen()
 
 # Features futuras:
     # Client to client 
