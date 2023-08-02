@@ -68,7 +68,8 @@ if __name__ == '__main__':
 
 ## Considerações:
     # Sistema de filas do teatro
-    # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com while ou return)
+    # Estudar passar AddressFamily e SocketType como parâmetros
+    # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com break ou return) p/ finalizar thread
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
     # Avaliar backlog e conexões simultâneas no server.listen()
