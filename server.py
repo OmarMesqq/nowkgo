@@ -47,7 +47,7 @@ def handle_client(conn, addr, count):
     """
     Lida com a conexão de um cliente
     """
-    print(f"[*] Cliente local novo na porta {addr[1]}")
+    print(f"[*] Cliente novo na porta {addr[1]}")
 
     while True:    # não precisa desse laço
         # Inicia a conversa
