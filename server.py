@@ -18,7 +18,6 @@ def grabPort(server, port):
     """
     try:
         server.bind((HOST,port))
-        print(f"[*] Esperando conexões em {HOST}:{port}") 
         return  
     except OSError:
         port += 1 
@@ -35,12 +34,13 @@ def main():
     grabPort(server, port)
 
     server.listen(50)     # Avaliar backlog e conexões simultâneas
+    print(f"[*] Esperando conexões em {HOST}:{port}")
     count = 0
 
     while True: 
-        conn, addr = server.accept()
+        conn, addr = server.accept()    # Bloqueante 
         count += 1
-        threading.Thread(target=handle_client, args=(conn, addr, count)).start()
+        threading.Thread(target=handle_client, args=(conn, addr, count)).start() # Avaliar jogar start() para linha de baixo
         
         
 def handle_client(conn, addr, count):
@@ -49,18 +49,14 @@ def handle_client(conn, addr, count):
     """
     print(f"[*] Cliente novo na porta {addr[1]}")
 
-    # Inicia a conversa
     conn.sendall(b"\nToc Toc\n") 
 
-    # Espera e processa a próxima mensagem (bloqueante)
-    msg = conn.recv(1024)     # Timeout p/ espera
-    msg = tostr(msg)
+    msg = conn.recv(1024)     # Bloqueante
+    msg = tostr(msg)    # Fazer decode aqui 
     print(f"[*] Cliente {count} diz: {msg}") 
 
-    # Envia a punchline de volta
     conn.sendall(getPunchline())
-
-    # Fecha a conexão 
+ 
     conn.close() 
     print(f"[*] Conexão com cliente {addr} terminou com sucesso")
     
@@ -73,4 +69,13 @@ if __name__ == '__main__':
         print("\n[*] Saindo...")
         exit(0)
 
+
+
 # Sistema de filas do teatro
+# Implementar disconnect message (com while ou return)
+# Timeout p/ espera no recv do cliente
+
+# Sendall pode jogar exceção
+
+# Client to client 
+# Receber non strings (json ou pickle)
