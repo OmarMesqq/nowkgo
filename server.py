@@ -3,12 +3,7 @@ import threading
 from punchlines import getPunchline
 
 HOST = "127.0.0.1"
-
-def tostr(bytes):
-    """ 
-    Converte bytes para string
-    """
-    return bytes.decode('utf-8')
+FORMAT = 'utf-8'
 
 
 def grabPort(server, port):
@@ -53,7 +48,7 @@ def handle_client(conn, addr, count):
     conn.sendall(b"\nToc Toc\n") 
 
     msg = conn.recv(1024)     # Bloqueante
-    msg = tostr(msg)    # Fazer decode aqui 
+    msg = msg.decode(FORMAT)
     print(f"[*] Cliente {count} diz: {msg}") 
 
     conn.sendall(getPunchline())
@@ -73,7 +68,7 @@ if __name__ == '__main__':
 
 ## Considerações:
     # Sistema de filas do teatro
-    # Implementar disconnect message (com while ou return)
+    # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com while ou return)
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
     # Avaliar backlog e conexões simultâneas no server.listen()
