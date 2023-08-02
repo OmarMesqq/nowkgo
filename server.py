@@ -40,7 +40,8 @@ def main():
     while True: 
         conn, addr = server.accept()    # Bloqueante 
         count += 1
-        threading.Thread(target=handle_client, args=(conn, addr, count)).start() # Avaliar jogar start() para linha de baixo
+        clientThread = threading.Thread(target=handle_client, args=(conn, addr, count))
+        clientThread.start()
         
         
 def handle_client(conn, addr, count):
@@ -77,6 +78,6 @@ if __name__ == '__main__':
     # Sendall pode jogar exceção
     # Avaliar backlog e conexões simultâneas no server.listen()
 
-# Features futuras:
+## Features futuras:
     # Client to client 
     # Receber non strings (json ou pickle)
