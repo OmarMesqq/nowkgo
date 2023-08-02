@@ -70,12 +70,12 @@ if __name__ == '__main__':
         exit(0)
 
 
+## Considerações:
+    # Sistema de filas do teatro
+    # Implementar disconnect message (com while ou return)
+    # Timeout p/ espera no recv do cliente
+    # Sendall pode jogar exceção
 
-# Sistema de filas do teatro
-# Implementar disconnect message (com while ou return)
-# Timeout p/ espera no recv do cliente
-
-# Sendall pode jogar exceção
-
-# Client to client 
-# Receber non strings (json ou pickle)
+# Features futuras:
+    # Client to client 
+    # Receber non strings (json ou pickle)
