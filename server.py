@@ -49,22 +49,21 @@ def handle_client(conn, addr, count):
     """
     print(f"[*] Cliente novo na porta {addr[1]}")
 
-    while True:    # não precisa desse laço
-        # Inicia a conversa
-        conn.sendall(b"\nToc Toc\n") 
+    # Inicia a conversa
+    conn.sendall(b"\nToc Toc\n") 
 
-        # Espera e processa a próxima mensagem (bloqueante)
-        msg = conn.recv(1024)     # Timeout p/ espera
-        msg = tostr(msg)
-        print(f"[*] Cliente {count} diz: {msg}") 
+    # Espera e processa a próxima mensagem (bloqueante)
+    msg = conn.recv(1024)     # Timeout p/ espera
+    msg = tostr(msg)
+    print(f"[*] Cliente {count} diz: {msg}") 
 
-        # Envia a punchline de volta
-        conn.sendall(getPunchline())
+    # Envia a punchline de volta
+    conn.sendall(getPunchline())
 
-        # Fecha a conexão 
-        conn.close() 
-        print(f"[*] Conexão com cliente {addr} terminou com sucesso")
-        break
+    # Fecha a conexão 
+    conn.close() 
+    print(f"[*] Conexão com cliente {addr} terminou com sucesso")
+    
 
 
 if __name__ == '__main__':
