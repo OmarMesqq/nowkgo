@@ -1,6 +1,6 @@
 import socket 
 import threading
-from punchlines import getPunchline
+from punchlines import getJoke
 
 HOST = "127.0.0.1"
 FORMAT = 'utf-8'
@@ -51,7 +51,13 @@ def handle_client(conn, addr, count):
     msg = msg.decode(FORMAT)
     print(f"[*] Cliente {count} diz: {msg}") 
 
-    conn.sendall(getPunchline())
+    conn.sendall(getJoke()[0] + b"\n")
+
+    msg = conn.recv(1024)     # Bloqueante
+    msg = msg.decode(FORMAT) 
+    print(f"[*] Cliente {count} diz: {msg}")
+
+    conn.sendall(getJoke()[1] + b"\n\n")
  
     conn.close() 
     print(f"[*] Conexão com cliente {addr} terminou com sucesso")
