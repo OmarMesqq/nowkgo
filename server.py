@@ -6,7 +6,7 @@ HOST = "127.0.0.1"
 FORMAT = 'utf-8'
 
 
-def grabPort(server, port):
+def bindPort(server, port):
     """    
     Tenta bindar o socket do servidor à porta fornecida. 
     Caso esteja ocupada, tenta a próxima disponível.
@@ -16,7 +16,7 @@ def grabPort(server, port):
         return  
     except OSError:
         port += 1 
-        grabPort(server, port) 
+        bindPort(server, port) 
 
 
 def main(): 
@@ -26,7 +26,7 @@ def main():
     port = 9001
     
     server = socket.socket() 
-    grabPort(server, port)
+    bindPort(server, port)
 
     server.listen(50)  # Numero baixo aqui da rate limit localmente   
     print(f"[*] Esperando conexões em {HOST}:{port}")
