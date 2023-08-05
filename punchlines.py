@@ -5,10 +5,10 @@ def getJoke():
     """
     Retorna uma tupla em bytes com a chave e o valor da piada
     """
-    arraySize = range(len(animals))
-    randomIndex = random.choice(arraySize)
-    key =  animals[randomIndex]
-    return (key.encode(FORMAT), jokes[key].encode(FORMAT))
+    key =  random.choice(animals)
+    bytes_key = key.encode(FORMAT)
+    bytes_punchline = jokes[key].encode(FORMAT)
+    return (bytes_key, bytes_punchline)
 
 
 animals = [
