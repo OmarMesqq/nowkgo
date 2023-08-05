@@ -28,7 +28,7 @@ def main():
     server = socket.socket() 
     grabPort(server, port)
 
-    server.listen(3)     
+    server.listen(50)  # Numero baixo aqui da rate limit localmente   
     print(f"[*] Esperando conexões em {HOST}:{port}")
     count = 0
 
@@ -44,6 +44,7 @@ def handle_client(conn, addr, count):
     Lida com a conexão de um cliente
     """
     print(f"[*] Cliente novo na porta {addr[1]}")
+    intro , punchline = getJoke()
 
     conn.sendall(b"\nToc Toc\n") 
 
@@ -51,13 +52,13 @@ def handle_client(conn, addr, count):
     msg = msg.decode(FORMAT)
     print(f"[*] Cliente {count} diz: {msg}") 
 
-    conn.sendall(getJoke()[0] + b"\n")
+    conn.sendall(intro + b"\n")
 
     msg = conn.recv(1024)     # Bloqueante
     msg = msg.decode(FORMAT) 
     print(f"[*] Cliente {count} diz: {msg}")
 
-    conn.sendall(getJoke()[1] + b"\n\n")
+    conn.sendall(punchline + b"\n\n")
  
     conn.close() 
     print(f"[*] Conexão com cliente {addr} terminou com sucesso")
@@ -73,6 +74,8 @@ if __name__ == '__main__':
 
 
 ## Considerações:
+    # Estudar rate limit
+    # Cor no terminal
     # Sistema de filas do teatro
     # Estudar passar AddressFamily e SocketType como parâmetros
     # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com break ou return) p/ finalizar thread
