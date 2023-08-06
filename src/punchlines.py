@@ -43,8 +43,6 @@ punchlines = [
 jokes = {animal: punchline for animal, punchline in zip(animals, punchlines)}
 
 
-# Teste do strict no zip
-
 # Piadas internas da empresa
 # calindra = ["Cachorro", "Mané"]
 # calindra_punchlines = ["Que comeu sua branch", "que programa"]
