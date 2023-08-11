@@ -28,7 +28,7 @@ def main():
     server = socket.socket()    # Cria socket IPv4 TCP
     bindPort(server, port)
 
-    server.listen(50)  # Numero baixo aqui da rate limit localmente   
+    server.listen(50)  
     print(f"[*] Esperando conexões em {HOST}:{port}")
     count = 0
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com break ou return) p/ finalizar thread
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
-    # Avaliar backlog e conexões simultâneas no server.listen()
+    # Avaliar backlog/conexões simultâneas e rate limit atrelado a um numero baixo no server.listen()
 
 ## Features futuras:
     # Client to client 
