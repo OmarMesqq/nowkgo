@@ -82,6 +82,8 @@ if __name__ == '__main__':
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
     # Avaliar backlog e conexões simultâneas no server.listen()
+    # Abrir imagem 
+    # Encapsular programa sum singleton
 
 ## Features futuras:
     # Client to client 
