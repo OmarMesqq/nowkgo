@@ -25,7 +25,7 @@ def main():
     """
     port = 9001
     
-    server = socket.socket() 
+    server = socket.socket()    # Cria socket IPv4 TCP
     bindPort(server, port)
 
     server.listen(50)  # Numero baixo aqui da rate limit localmente   
@@ -44,7 +44,7 @@ def handle_client(conn, addr, count):
     Lida com a conexão de um cliente
     """
     print(f"[*] Cliente novo na porta {addr[1]}")
-    intro , punchline = getJoke()
+    intro, punchline = getJoke()
 
     conn.sendall(b"\nToc Toc\n") 
 
@@ -64,7 +64,6 @@ def handle_client(conn, addr, count):
     print(f"[*] Conexão com cliente {addr} terminou com sucesso")
     
 
-
 if __name__ == '__main__':
     try:
         main() 
@@ -77,13 +76,10 @@ if __name__ == '__main__':
     # Estudar rate limit
     # Cor no terminal
     # Sistema de filas do teatro
-    # Estudar passar AddressFamily e SocketType como parâmetros
     # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com break ou return) p/ finalizar thread
     # Timeout p/ espera no recv do cliente
     # Sendall pode jogar exceção
     # Avaliar backlog e conexões simultâneas no server.listen()
-    # Abrir imagem 
-    # Encapsular programa sum singleton
 
 ## Features futuras:
     # Client to client 
