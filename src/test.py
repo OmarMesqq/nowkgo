@@ -16,3 +16,4 @@ if __name__ == "__main__":
     unittest.main()
 
 # Teste do strict no zip do punchlines
+# Implementar cobertura
