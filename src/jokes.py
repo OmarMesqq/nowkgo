@@ -5,13 +5,13 @@ def getJoke():
     """
     Retorna uma tupla em bytes com a chave e o valor da piada
     """
-    key =  random.choice(animals)
+    key =  random.choice(setups)
     bytes_key = key.encode(FORMAT)
     bytes_punchline = jokes[key].encode(FORMAT)
     return (bytes_key, bytes_punchline)
 
 
-animals = [
+setups = [
     "A mosca!",
     "O cavalo!",
     "A uva!",
@@ -40,7 +40,7 @@ punchlines = [
 
 # Dicionário com compreensão para as piadas
 # Um jeito pythonico de declarar um dicionário
-jokes = {animal: punchline for animal, punchline in zip(animals, punchlines)}
+jokes = {setup: punchline for setup, punchline in zip(setups, punchlines)}
 
 
 # Piadas internas da empresa
