@@ -71,6 +71,7 @@ def handle_client(conn, addr, count):
         conn.sendall(punchline + b"\n\n")
  
         print(f"[*] Conexão com cliente {count} terminou com sucesso")
+
     except socket.timeout:
         conn.sendall(b"\nVOCE FOI DESCONECTADA(O) POR INATIVIDADE\n")
         print(f"[*] Cliente {count} desconectado por inatividade")
@@ -91,9 +92,7 @@ if __name__ == '__main__':
 
 
 ## Considerações:
-    # Cor no terminal
     # Sistema de filas do teatro
-    # Melhorar saída do cliente no meio da conexão/implementar disconnect message (com break ou return) p/ finalizar thread
     # Avaliar backlog/conexões simultâneas e rate limit atrelado a um numero baixo no server.listen()
 
 ## Features futuras:
