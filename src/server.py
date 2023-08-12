@@ -1,6 +1,6 @@
 import socket 
 import threading
-from punchlines import getJoke
+from jokes import getJoke
 
 HOST = "127.0.0.1"
 FORMAT = 'utf-8'
