@@ -1,15 +1,12 @@
 ## Ideia de produto: 
---- 
 Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local. 
 
 ## Funcionalidades: 
---- 
 - Baseado em sockets 
 - Multi-threading 
 - Sem dependências externas 
 
 ## Como utilizar:
----
 1)  `git clone https://github.com/OmarMesqq/socketcom` 
 
 2) `cd socketcom` 
@@ -21,6 +18,5 @@ Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local.
 5) Converse com o servidor e se divirta!
 
 ## Referências:
----
 - [Documentação Python - socket](https://docs.python.org/3/library/socket.html) 
 - [Documentação Python - threading](https://docs.python.org/3/library/threading.html)
