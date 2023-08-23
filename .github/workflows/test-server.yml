@@ -7,7 +7,9 @@ on:
 
 jobs:
   test-server:
-    runs-on: python:3.8-slim
+    runs-on: ubuntu-latest
+    container: 
+        image: python:3.8-slim
 
     steps:
     - name: Git Checkout
