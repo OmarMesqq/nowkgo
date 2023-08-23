@@ -22,8 +22,8 @@ setups = [
     "O elefante!",
     "A abelha!",
     "O canguru!",
-    "Cachorro", 
-    "Mané"
+    "O cachorro!", 
+    "O mané!"
 ]
 
 punchlines = [
@@ -41,6 +41,5 @@ punchlines = [
     "Que programa!"
 ]
 
-# Dicionário com compreensão para as piadas
-# Um jeito pythonico de declarar um dicionário
+# Dicionário com compreensão de lista para as piadas
 jokes = {setup: punchline for setup, punchline in zip(setups, punchlines)}
