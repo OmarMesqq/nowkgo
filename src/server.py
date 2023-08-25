@@ -5,10 +5,9 @@ from jokes import getJoke
 HOST = "127.0.0.1"
 FORMAT = 'utf-8'
 DISCLAIMER = '''
-OLÁ!
-O SERVIDOR DE PIADAS TE RECEBE DE BRAÇOS ABERTOS.
-DIVIRTA-SE!
-Você tem um minuto entre conversas para interagir com o servidor. 
+Olá!
+O servidor de piadas te recebe de braços abertos! 
+Você tem um minuto entre conversas antes de explodir por inatividade :)
 -------------------------------------------------------------------------------------
 '''
 
@@ -35,7 +34,7 @@ def main():
     server = socket.socket()    # Cria socket IPv4 TCP
     bindPort(server, port)
     
-    server.listen(50)  
+    server.listen(5)  
     count = 0
     print("[*] Esperando conexões...")
 
@@ -73,12 +72,12 @@ def handle_client(conn, addr, count):
         print(f"[*] Conexão com cliente {count} terminou com sucesso")
 
     except socket.timeout:
-        conn.sendall(b"\nVOCE FOI DESCONECTADA(O) POR INATIVIDADE\n")
+        conn.sendall(b"\nVOCE EXPLODIU!\n")
         print(f"[*] Cliente {count} desconectado por inatividade")
     except (BrokenPipeError, UnicodeDecodeError):
         print(f"[*] Cliente {count} encerrou a conexão") 
     except Exception as e:
-        print(f"[*] Erro desconhecido entre cliente e servidor:\n", e)
+        print(f"[!] Erro desconhecido entre cliente e servidor:\n", e)
     finally:
         conn.close()
     
