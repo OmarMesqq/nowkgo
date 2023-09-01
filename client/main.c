@@ -9,6 +9,8 @@
 
 #define MAX_INPUT_SIZE 100 
 
+static const char HOST[10] = "127.0.0.1";
+
 struct sockaddr_in setupServer() {
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET; 
@@ -32,8 +34,16 @@ int main() {
     char server_buffer[1024] = {0}; // inicializa buffer p/ guardar msgs recebidas para todo de zeros 
     ssize_t bytes_received; // independente de plataforma: define tamanho maximo que permite I/O
 
+    struct sockaddr_in server_address = setupServer();
+
     printf("Seja bem vindo(a) ao servidor de piadas!\nVocê tem 1 minuto entre conversas para não explodir :)");
     printf("\n");
+
+    // Converte HOST para binário e guarda no struct
+    if (inet_pton(AF_INET, HOST, &server_address.sin_addr) <= 0) {
+        perror("Endereço de IP inválido! Verifique se o entrou corretamente.");
+        exit(EXIT_FAILURE);
+    }
 
     while (1) {
         printf("> ");
