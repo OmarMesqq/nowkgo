@@ -1,38 +1,55 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h>      // Include standard I/O for printf and other functions
+#include <stdlib.h>     // Include standard library for exit and other utility functions
+#include <string.h>     // Include string.h for string manipulation functions like strlen
+#include <unistd.h>     // Include unistd.h for close function
+#include <arpa/inet.h>  // Include arpa/inet.h for inet_pton and other network functions
+// Include sys/types and sys/socket for socket programming types and functions
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #define MAX_INPUT_SIZE 100 
 
-void echoInput(const char* input) {
-    printf("%s\n", input);
+struct sockaddr_in setupServer() {
+    struct sockaddr_in server_address;
+    server_address.sin_family = AF_INET; 
+    server_address.sin_port = htons(9001); // Garante que a porta será Big Endian (network byte order)
+    return server_address;
+}
+
+int setupClient() {
+    int client_socket; // Armazena o descriptor do cliente
+    client_socket = socket(AF_INET, SOCK_STREAM, 0); // IPv4, stream oriented e TCP
+
+    if (client_socket == -1) {
+        perror("Não foi possível criar socket do cliente!");
+        return EXIT_FAILURE;
+    }
+    return client_socket;
 }
 
 int main() {
-    char input_buffer[MAX_INPUT_SIZE];
+    char client_buffer[MAX_INPUT_SIZE]; // buffer p/ guardar o que o cliente digita 
+    char server_buffer[1024] = {0}; // inicializa buffer p/ guardar msgs recebidas para todo de zeros 
+    ssize_t bytes_received; // independente de plataforma: define tamanho maximo que permite I/O
+
+    printf("Seja bem vindo(a) ao servidor de piadas!\nVocê tem 1 minuto entre conversas para não explodir :)");
+    printf("\n");
 
     while (1) {
         printf("> ");
 
-        // Joga entrada do stdin pro array de entrada até o tamanho especificado 
-        // Se der NULL, quebra o ciclo
-        if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        if (fgets(client_buffer, sizeof(client_buffer), stdin) == NULL) {
             break;
         }
 
-        // Substitui o caracter newline no input buffer 
-        // pelo null terminating 
-        // A função strcspn retorna a posição do segundo caracter 
-        // na primeira string 
-        input_buffer[strcspn(input_buffer, "\n")] = '\0';
+        client_buffer[strcspn(client_buffer, "\n")] = '\0';
 
-        if (strcmp(input_buffer, "exit") == 0) {
+        if (strcmp(client_buffer, "exit") == 0) {
             break;
         }
 
-        echoInput(input_buffer);
     }
 
-    printf("Exiting. Goodbye!\n");
+    printf("Agradecemos a preferência!Volte logo!\n");
     return 0;
 }
