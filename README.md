@@ -1,10 +1,9 @@
 ## Ideia de produto: 
 Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local. 
 
-## Funcionalidades: 
-- Baseado em sockets 
-- Multi-threading 
-- Sem dependências externas 
+## O que aprendi:
+- O que são sockets e boas práticas
+- Abertura e controle de múltiplas threads 
 
 ## Como utilizar:
 1)  `git clone https://github.com/OmarMesqq/socketcom` 
