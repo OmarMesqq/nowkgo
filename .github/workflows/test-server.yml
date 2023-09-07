@@ -17,5 +17,5 @@ jobs:
 
     - name: Run tests
       run: |
-        cd src
+        cd server
         python test.py
