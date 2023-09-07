@@ -54,20 +54,19 @@ def handle_client(conn, addr, count):
     intro, punchline = getJoke()
 
     try: 
-        conn.sendall(DISCLAIMER.encode(FORMAT))
-        conn.sendall(b"Toc Toc\n") 
+        conn.sendall(b"> " + b"Toc Toc") 
 
         msg = conn.recv(1024)     # Bloqueante
         msg = msg.decode(FORMAT)
         print(f"[*] Cliente {count} diz: {msg}") 
 
-        conn.sendall(intro + b"\n")
+        conn.sendall(b"> " + intro)
 
         msg = conn.recv(1024)     # Bloqueante
         msg = msg.decode(FORMAT) 
         print(f"[*] Cliente {count} diz: {msg}")
 
-        conn.sendall(punchline + b"\n\n")
+        conn.sendall(b"> " + punchline)
  
         print(f"[*] Conexão com cliente {count} terminou com sucesso")
 
