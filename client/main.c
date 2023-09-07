@@ -37,6 +37,11 @@ void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_s
         return;
     }
     
+    if (strcmp(server_buffer, "> VOCE EXPLODIU!") == 0) {
+        printf("> VOCÊ EXPLODIU!");
+        exit(0);
+    }
+
     server_buffer[bytes_received] = '\0'; 
     printf("%s\n", server_buffer);
 }
