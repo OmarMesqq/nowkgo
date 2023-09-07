@@ -69,9 +69,8 @@ def handle_client(conn, addr, count):
         conn.sendall(b"> " + punchline)
  
         print(f"[*] Conexão com cliente {count} terminou com sucesso")
-
     except socket.timeout:
-        conn.sendall(b"\nVOCE EXPLODIU!\n")
+        conn.sendall(b"> " + b"VOCE EXPLODIU!")
         print(f"[*] Cliente {count} desconectado por inatividade")
     except (BrokenPipeError, UnicodeDecodeError):
         print(f"[*] Cliente {count} encerrou a conexão") 
@@ -89,10 +88,6 @@ if __name__ == '__main__':
         exit(0)
 
 
-## Considerações:
+## TO-DO:
     # Sistema de filas do teatro
     # Avaliar backlog/conexões simultâneas e rate limit atrelado a um numero baixo no server.listen()
-
-## Features futuras:
-    # Client to client 
-    # Receber non strings (json ou pickle)
