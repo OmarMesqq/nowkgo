@@ -12,18 +12,18 @@ def getJoke():
 
 
 setups = [
-    "A mosca!",
-    "O cavalo!",
-    "A uva!",
-    "O macaco!",
-    "O pato!",
-    "A aranha!",
-    "O milho!",
-    "O elefante!",
-    "A abelha!",
-    "O canguru!",
-    "O cachorro!", 
-    "O mané!"
+    "A mosca",
+    "O cavalo",
+    "A uva",
+    "O macaco",
+    "O pato",
+    "A aranha",
+    "O milho",
+    "O elefante",
+    "A abelha",
+    "O canguru",
+    "O cachorro", 
+    "O mané"
 ]
 
 punchlines = [
