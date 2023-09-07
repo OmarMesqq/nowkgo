@@ -30,13 +30,13 @@ int setupClient() {
 
 void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_size) {
     ssize_t bytes_received; // independente de plataforma: define tamanho maximo que permite I/O
-
-    // if (bytes_received <= 0) {
-    //     perror("Erro na conexão: o servidor não mandou dados ou a conexão foi interrompida");
-    //     return;
-    // }
-
     bytes_received = recv(client_socket, server_buffer, buffer_size - 1, 0);
+
+    if (bytes_received <= 0) {
+        perror("Erro na conexão: o servidor não mandou dados ou a conexão foi interrompida");
+        return;
+    }
+    
     server_buffer[bytes_received] = '\0'; 
     printf("%s\n", server_buffer);
 }
