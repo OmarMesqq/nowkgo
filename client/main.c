@@ -33,15 +33,24 @@ int main() {
     char client_buffer[MAX_INPUT_SIZE]; // buffer p/ guardar o que o cliente digita 
     char server_buffer[1024] = {0}; // inicializa buffer p/ guardar msgs recebidas para todo de zeros 
     ssize_t bytes_received; // independente de plataforma: define tamanho maximo que permite I/O
-
+    int client_socket = setupClient();
     struct sockaddr_in server_address = setupServer();
 
-    printf("Seja bem vindo(a) ao servidor de piadas!\nVocê tem 1 minuto entre conversas para não explodir :)");
-    printf("\n");
-
+    printf("Seja bem vindo(a) ao servidor de piadas!\nVocê tem 1 minuto entre conversas para não explodir :)\n");
+    
     // Converte HOST para binário e guarda no struct
     if (inet_pton(AF_INET, HOST, &server_address.sin_addr) <= 0) {
         perror("Endereço de IP inválido! Verifique se o entrou corretamente.");
+        exit(EXIT_FAILURE);
+    }
+
+    // Abre uma conexão no socket do cliente para o do servidor.
+    // Passa ponteiro do servidor para função connect. 
+    // Ele sofre um casting (esse é  seguro) para um struct mais genérico para sockets.  
+    // Como passamos um endereço na memória, temos que especificar tamanho com sizeof() da 
+    // estrutura para connect()
+    if (connect(client_socket, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
+        perror("Não foi possível conectar ao servidor!");
         exit(EXIT_FAILURE);
     }
 
@@ -58,8 +67,15 @@ int main() {
             break;
         }
 
+        // Manda todos os bytes (strlen(client_buffer)) de 
+        // client_buffer para socket do cliente e, consequentemente, para servidor
+        if (send(client_socket, client_buffer, strlen(client_buffer), 0) < 0) {
+            perror("Não foi possível mandar mensagem para o servidor!");
+            exit(EXIT_FAILURE);
+        }
     }
-
-    printf("Agradecemos a preferência!Volte logo!\n");
+    
+    close(client_socket);
+    printf("\nAgradecemos a preferência! Volte logo!\n");
     return 0;
 }
