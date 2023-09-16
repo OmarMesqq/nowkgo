@@ -2,8 +2,8 @@
 Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local. 
 
 ## O que aprendi:
-- O que são sockets e boas práticas
-- Abertura e controle de múltiplas threads 
+- O que são sockets e boas práticas (conexões TCP)
+- Abertura e controle de múltiplas threads (ambientes multithread)
 
 ## Como utilizar:
 1)  `git clone https://github.com/OmarMesqq/socketcom` 
@@ -12,9 +12,12 @@ Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local.
 
 3) `python3 server.py` 
 
-4) Em outro terminal, faça `telnet localhost 9001` ou a porta que lhe for informada pelo servidor.
+4) Em outro terminal: 
+    1) `cd socketcom` 
+    2) Compile o cliente: `gcc -o client client.c`
+    3) Rode o cliente: `./client`
 
-5) Converse com o servidor e se divirta!
+5) Você se conectou ao servidor!
 
 ## Referências:
 - [Documentação Python - socket](https://docs.python.org/3/library/socket.html) 
