@@ -4,12 +4,6 @@ from jokes import getJoke
 
 HOST = "127.0.0.1"
 FORMAT = 'utf-8'
-DISCLAIMER = '''
-Olá!
-O servidor de piadas te recebe de braços abertos! 
-Você tem um minuto entre conversas antes de explodir por inatividade :)
--------------------------------------------------------------------------------------
-'''
 
 def bindPort(server, port):
     """    
