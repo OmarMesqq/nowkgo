@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-func getJoke() (string, string) {
-	// TO-DO: implement
-	return "not", "implemented"
-}
-
-// Bind the socket to the given port, or find the next available port if the given port is busy
 func bindPort(port int) (net.Listener, int) {
 	for {
 		listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
@@ -23,44 +17,38 @@ func bindPort(port int) (net.Listener, int) {
 }
 
 func main() {
-	// Initialize port and listener
 	port := 9001
 	listener, boundPort := bindPort(port)
 	fmt.Printf("[*] Servidor ligado em 127.0.0.1:%d\n", boundPort)
 
-	// Initialize counter
 	count := 0
 
-	// Wait for incoming connections
+	// Espera por novas conexões
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("[!] Erro ao aceitar nova conexão:", err)
 			continue
 		}
-
-		// Increment counter
 		count++
-
-		go handleClient(conn, count) // Handle client in a new goroutine
+		go handleClient(conn, count)
 	}
 }
 
-// handleClient handles incoming client connections
 func handleClient(conn net.Conn, count int) {
 	defer conn.Close()
 
-	// Set a timeout for the connection
+	// 1min entre cada interação
 	conn.SetDeadline(time.Now().Add(1 * time.Minute))
 
 	fmt.Printf("[*] Cliente novo (número %d) na porta %s\n", count, conn.RemoteAddr())
 
 	intro, punchline := getJoke()
 
-	// Send knock knock
+	// Começa a interação
 	conn.Write([]byte("Toc Toc\n"))
 
-	// Read client's response
+	// Espera "quem é?"
 	buffer := make([]byte, 1024)
 	_, err := conn.Read(buffer)
 	if err != nil {
@@ -73,17 +61,17 @@ func handleClient(conn net.Conn, count int) {
 		return
 	}
 
-	// Send the joke intro
+	// Primeira parte da piada
 	conn.Write([]byte(intro + "\n"))
 
-	// Read client's response again
+	// Espera "fulano quem?"
 	_, err = conn.Read(buffer)
 	if err != nil {
 		fmt.Printf("[*] Cliente %d encerrou a conexão\n", count)
 		return
 	}
 
-	// Send the joke punchline
+	// Punchline
 	conn.Write([]byte(punchline + "\n\n"))
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", count)
