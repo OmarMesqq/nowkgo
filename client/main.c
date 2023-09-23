@@ -69,7 +69,7 @@ int main() {
     size_t server_buffer_size = sizeof(server_buffer);
     struct sockaddr_in server_address = setupServer();
 
-    printf("Seja bem vindo(a) ao servidor de piadas!\nVocê tem 1 minuto entre conversas para não explodir :)\n");
+    printf("Seja bem vindo(a) ao teatro de piadas!\nVocê tem 5 minutos para aproveitar o teatro antes de explodir :)\n");
     
     if (inet_pton(AF_INET, HOST, &server_address.sin_addr) <= 0) {
         perror("Endereço de IP inválido! Verifique se o entrou corretamente.");
