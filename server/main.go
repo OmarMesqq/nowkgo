@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -19,13 +22,23 @@ func bindPort(port int) (net.Listener, int) {
 func main() {
 	port := 9001
 	count := 0
-
 	serverSocket, port := bindPort(port)
 	defer serverSocket.Close()
 
+	// Cria canal do tipo os.Signal para receber sinais do sistema
+	// É bufferizado e de capacidade 1 para evitar bloqueio
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
+	go func() {
+		<-sigCh // Bloqueante até receber um sinal
+		fmt.Println("\n[*] Saindo...")
+		serverSocket.Close()
+		os.Exit(0)
+	}()
+
 	fmt.Printf("[*] Servidor local ligado na porta %d\n", port)
 
-	// Espera por novas conexões até o programa ser encerrado
+	// Espera por novas conexões
 	for {
 		clientSocket, err := serverSocket.Accept()
 		if err != nil {
@@ -39,12 +52,10 @@ func main() {
 
 func handleClient(clientSocket net.Conn, count int) {
 	defer clientSocket.Close()
+	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
 
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
-
-	// Se interação com cliente demorar mais que 5 minutos, encerra a conexão
-	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
 
 	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", count, clientSocket.RemoteAddr())
 
