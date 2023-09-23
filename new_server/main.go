@@ -7,10 +7,11 @@ import (
 )
 
 func bindPort(port int) (net.Listener, int) {
+	// Loop infinito para para criar um socket TCP conectado a uma porta
 	for {
-		listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+		serverSocket, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
 		if err == nil {
-			return listener, port
+			return serverSocket, port
 		}
 		port++
 	}
@@ -18,42 +19,46 @@ func bindPort(port int) (net.Listener, int) {
 
 func main() {
 	port := 9001
-	listener, boundPort := bindPort(port)
-	fmt.Printf("[*] Servidor ligado em 127.0.0.1:%d\n", boundPort)
-
 	count := 0
 
-	// Espera por novas conexões
+	serverSocket, port := bindPort(port)
+	defer serverSocket.Close()
+
+	fmt.Printf("[*] Servidor local ligado na porta %d\n", port)
+
+	// Espera por novas conexões até o programa ser encerrado
 	for {
-		conn, err := listener.Accept()
+		clientSocket, err := serverSocket.Accept()
 		if err != nil {
-			fmt.Println("[!] Erro ao aceitar nova conexão:", err)
+			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
 			continue
 		}
 		count++
-		go handleClient(conn, count)
+		go handleClient(clientSocket, count) //TO-DO: implementar limitador de conexões
 	}
 }
 
-func handleClient(conn net.Conn, count int) {
-	defer conn.Close()
-
-	// 1min entre cada interação
-	conn.SetDeadline(time.Now().Add(1 * time.Minute))
-
-	fmt.Printf("[*] Cliente novo (número %d) na porta %s\n", count, conn.RemoteAddr())
+func handleClient(clientSocket net.Conn, count int) {
+	defer clientSocket.Close()
 
 	intro, punchline := getJoke()
+	clientBuffer := make([]byte, 1024)
+
+	// Se interação com cliente demorar mais que 5 minutos, encerra a conexão
+	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
+
+	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", count, clientSocket.RemoteAddr())
 
 	// Começa a interação
-	conn.Write([]byte("Toc Toc\n"))
+	clientSocket.Write(toBytesSlice("Toc Toc"))
 
 	// Espera "quem é?"
-	buffer := make([]byte, 1024)
-	_, err := conn.Read(buffer)
+	response, err := clientSocket.Read(clientBuffer)
 	if err != nil {
+		// Checa se erro é erro de rede. Se for, "ok" é verdade e atribui o erro a netErr.
+		// Depois, verifica se "ok" é verdade. Se for, verifica se o erro é de timeout.
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
-			conn.Write([]byte("\nVOCE EXPLODIU!\n"))
+			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
 			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", count)
 			return
 		}
@@ -61,18 +66,37 @@ func handleClient(conn net.Conn, count int) {
 		return
 	}
 
+	fmt.Printf("[*] Cliente %d diz: %s\n", count, string(clientBuffer[:response]))
+
 	// Primeira parte da piada
-	conn.Write([]byte(intro + "\n"))
+	clientSocket.Write(toBytesSlice(intro))
 
 	// Espera "fulano quem?"
-	_, err = conn.Read(buffer)
+	response, err = clientSocket.Read(clientBuffer)
 	if err != nil {
+		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
+			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", count)
+			return
+		}
 		fmt.Printf("[*] Cliente %d encerrou a conexão\n", count)
 		return
 	}
 
+	fmt.Printf("[*] Cliente %d diz: %s\n", count, string(clientBuffer[:response]))
+
 	// Punchline
-	conn.Write([]byte(punchline + "\n\n"))
+	clientSocket.Write(toBytesSlice(punchline))
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", count)
 }
+
+func toBytesSlice(str string) []byte {
+	return []byte(str)
+}
+
+/*
+Obs.: A linguagem Go lida com erros de uma forma diferente da utilizada em outras linguagens.
+Em Go, erros são valores de retorno de funções. Se uma função retorna um erro,
+é responsabilidade de quem a chamou verificar se o erro é nil ou não.
+*/
