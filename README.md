@@ -30,3 +30,4 @@ Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local.
 - [Go - bytes](https://pkg.go.dev/bytes) 
 - [Go - slices](https://go.dev/blog/slices-intro) 
 - [Go - defer](https://www.digitalocean.com/community/tutorials/understanding-defer-in-go)
+- [Go - testing](https://pkg.go.dev/testing#T)
