@@ -26,3 +26,7 @@ Um teatro de piadas estilo *toc toc* que pode ser acessado por um cliente local.
 ## Referências:
 - [Documentação Python - socket](https://docs.python.org/3/library/socket.html) 
 - [Documentação Python - threading](https://docs.python.org/3/library/threading.html)
+- [Go - net ](https://pkg.go.dev/net)
+- [Go - bytes](https://pkg.go.dev/bytes) 
+- [Go - slices](https://go.dev/blog/slices-intro) 
+- [Go - defer](https://www.digitalocean.com/community/tutorials/understanding-defer-in-go)
