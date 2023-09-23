@@ -8,14 +8,12 @@ on:
 jobs:
   test-server:
     runs-on: ubuntu-latest
-    container: 
-        image: python:3.11-slim
 
     steps:
     - name: Git Checkout
       uses: actions/checkout@v2
 
-    - name: Run tests
+    - name: Run unit tests on the server
       run: |
         cd server
-        python test.py
+        go test
