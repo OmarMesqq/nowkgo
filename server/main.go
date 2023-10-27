@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func bindPort(port int) (net.Listener, int) {
+func createServer(port int) (net.Listener, int) {
 	for {
 		serverSocket, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
 		if err == nil {
@@ -22,7 +22,7 @@ func bindPort(port int) (net.Listener, int) {
 func main() {
 	port := 9001
 	count := 0
-	serverSocket, port := bindPort(port)
+	serverSocket, port := createServer(port)
 	defer serverSocket.Close()
 
 	// Cria canal do tipo os.Signal para receber sinais do sistema
