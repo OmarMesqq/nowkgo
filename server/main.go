@@ -21,12 +21,10 @@ func createServer(port int) (net.Listener, int) {
 
 func main() {
 	port := 9001
-	count := 0
+	clientNumber := 0
 	serverSocket, port := createServer(port)
 	defer serverSocket.Close()
 
-	// Cria canal do tipo os.Signal para receber sinais do sistema
-	// É bufferizado e de capacidade 1 para evitar bloqueio
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
 	go func() {
@@ -45,19 +43,19 @@ func main() {
 			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
 			continue
 		}
-		count++
-		go handleClient(clientSocket, count) //TO-DO: implementar limitador de conexões
+		clientNumber++
+		go handleClient(clientSocket, clientNumber) //TO-DO: implementar limitador de conexões
 	}
 }
 
-func handleClient(clientSocket net.Conn, count int) {
+func handleClient(clientSocket net.Conn, clientNumber int) {
 	defer clientSocket.Close()
 	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
 
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
 
-	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", count, clientSocket.RemoteAddr())
+	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", clientNumber, clientSocket.RemoteAddr())
 
 	clientSocket.Write(toBytesSlice("Toc Toc")) // começa a interação
 
@@ -65,13 +63,13 @@ func handleClient(clientSocket net.Conn, count int) {
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
 			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
-			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", count)
+			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d encerrou a conexão\n", count)
+		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
 		return
 	}
-	fmt.Printf("[*] Cliente %d diz: %s\n", count, string(clientBuffer[:response]))
+	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(toBytesSlice(intro)) // primeira parte da piada
 
@@ -79,17 +77,17 @@ func handleClient(clientSocket net.Conn, count int) {
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
 			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
-			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", count)
+			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d encerrou a conexão\n", count)
+		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
 		return
 	}
-	fmt.Printf("[*] Cliente %d diz: %s\n", count, string(clientBuffer[:response]))
+	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(toBytesSlice(punchline))
 
-	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", count)
+	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 }
 
 func toBytesSlice(str string) []byte {
