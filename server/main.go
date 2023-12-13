@@ -64,7 +64,7 @@ func main() {
 
 func sendToQueue(clientSocket net.Conn, queue *Queue) {
 	defer clientSocket.Close()
-	clientSocket.Write(toBytesSlice("O teatro está cheio! Fique na fila e você já entra"))
+	clientSocket.Write(bytes("O teatro está cheio! Fique na fila e você já entra"))
 
 	fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
 
@@ -80,12 +80,12 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 
 	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", clientNumber, clientSocket.RemoteAddr())
 
-	clientSocket.Write(toBytesSlice("Toc Toc")) // começa a interação
+	clientSocket.Write(bytes("Toc Toc")) // começa a interação
 
 	response, err := clientSocket.Read(clientBuffer) // espera "quem é?"
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
-			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
+			clientSocket.Write(bytes("\nVOCE EXPLODIU!\n"))
 			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
 			return
 		}
@@ -94,12 +94,12 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	}
 	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
-	clientSocket.Write(toBytesSlice(intro)) // primeira parte da piada
+	clientSocket.Write(bytes(intro)) // primeira parte da piada
 
 	response, err = clientSocket.Read(clientBuffer) // espera "fulano quem?"
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
-			clientSocket.Write(toBytesSlice("\nVOCE EXPLODIU!\n"))
+			clientSocket.Write(bytes("\nVOCE EXPLODIU!\n"))
 			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
 			return
 		}
@@ -108,13 +108,13 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	}
 	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
-	clientSocket.Write(toBytesSlice(punchline))
+	clientSocket.Write(bytes(punchline))
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 
 	theater.peopleInRoom -= 1
 }
 
-func toBytesSlice(str string) []byte {
+func bytes(str string) []byte {
 	return []byte(str)
 }
