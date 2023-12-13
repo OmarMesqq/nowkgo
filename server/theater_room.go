@@ -5,10 +5,10 @@ type TheaterRoom struct {
 	maxTheaterCapacity int
 }
 
-func (room TheaterRoom) IsThereRoom() bool {
+func (room *TheaterRoom) IsThereRoom() bool {
 	return room.peopleInRoom < room.maxTheaterCapacity
 }
 
-func (room TheaterRoom) IsEmpty() bool {
+func (room *TheaterRoom) IsEmpty() bool {
 	return room.peopleInRoom == 0
 }
