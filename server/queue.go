@@ -5,18 +5,14 @@ import (
 )
 
 type Queue struct {
-	people []net.Addr
+	people []net.Conn
 }
 
-func (queue Queue) GetPeopleInLine() int {
-	return len(queue.people)
-}
-
-func (queue *Queue) Enqueue(clientAddress net.Addr) {
+func (queue *Queue) Enqueue(clientAddress net.Conn) {
 	queue.people = append(queue.people, clientAddress)
 }
 
-func (queue *Queue) Dequeue() net.Addr {
+func (queue *Queue) Dequeue() net.Conn {
 	if len(queue.people) == 0 {
 		return nil
 	}
