@@ -8,7 +8,3 @@ type Theater struct {
 func (room *Theater) IsThereRoom() bool {
 	return room.peopleInRoom < room.maxTheaterCapacity
 }
-
-func (room *Theater) IsEmpty() bool {
-	return room.peopleInRoom == 0
-}
