@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+func bytes(str string) []byte {
+	return []byte(str)
+}
+
 func createServer(port int) (net.Listener, int) {
 	for {
 		serverSocket, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
@@ -19,59 +23,16 @@ func createServer(port int) (net.Listener, int) {
 	}
 }
 
-func main() {
-	port := 9001
-	clientNumber := 0
-
-	theater := &Theater{
-		peopleInRoom:       0,
-		maxTheaterCapacity: 10,
-	}
-
-	queue := &Queue{}
-
-	serverSocket, port := createServer(port)
-	defer serverSocket.Close()
-
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
-	go func() {
-		<-sigCh
-		fmt.Println("\n[*] Saindo...")
-		serverSocket.Close()
-		os.Exit(0)
-	}()
-
-	fmt.Printf("[*] Servidor local ligado na porta %d\n", port)
-
-	// Espera por novas conexões
-	for {
-		clientSocket, err := serverSocket.Accept()
-		if err != nil {
-			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
-			continue
-		}
-
-		if theater.IsThereRoom() {
-			clientNumber++
-			go handleClient(clientSocket, clientNumber, theater)
-		} else {
-			go sendToQueue(clientSocket, queue)
-		}
-
-	}
-}
-
 func sendToQueue(clientSocket net.Conn, queue *Queue) {
 	defer clientSocket.Close()
 	clientSocket.Write(bytes("O teatro está cheio! Fique na fila e você já entra"))
 
 	fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
 
-	queue.Enqueue(clientSocket.RemoteAddr())
+	queue.Enqueue(clientSocket)
 }
 
-func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
+func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater, observer *Observer) {
 	defer clientSocket.Close()
 	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
 
@@ -112,9 +73,59 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 
-	theater.peopleInRoom -= 1
+	theater.Leave(observer)
 }
 
-func bytes(str string) []byte {
-	return []byte(str)
+func main() {
+	port := 9001
+	clientNumber := 0
+
+	theater := &Theater{
+		peopleInRoom:       0,
+		maxTheaterCapacity: 10,
+	}
+
+	queue := &Queue{}
+
+	observer := &Observer{
+		queue:   *queue,
+		theater: *theater,
+	}
+
+	serverSocket, port := createServer(port)
+	defer serverSocket.Close()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
+	go func() {
+		<-sigCh
+		fmt.Println("\n[*] Saindo...")
+		serverSocket.Close()
+		// fechar sockets dos clientes?
+		os.Exit(0)
+	}()
+
+	fmt.Printf("[*] Servidor local ligado na porta %d\n", port)
+
+	// Espera por novas conexões
+	for {
+		clientSocket, err := serverSocket.Accept()
+		if err != nil {
+			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
+			continue
+		}
+
+		if theater.IsThereRoom() {
+			if observer.left {
+				next := observer.GetNext()
+				clientNumber++
+				go handleClient(next, clientNumber, theater, observer)
+			} else {
+				clientNumber++
+				go handleClient(clientSocket, clientNumber, theater, observer)
+			}
+		} else {
+			go sendToQueue(clientSocket, queue)
+		}
+	}
 }
