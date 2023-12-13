@@ -22,13 +22,21 @@ func createServer(port int) (net.Listener, int) {
 func main() {
 	port := 9001
 	clientNumber := 0
+
+	theater := &Theater{
+		peopleInRoom:       0,
+		maxTheaterCapacity: 10,
+	}
+
+	queue := &Queue{}
+
 	serverSocket, port := createServer(port)
 	defer serverSocket.Close()
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
 	go func() {
-		<-sigCh // Bloqueante até receber um sinal
+		<-sigCh
 		fmt.Println("\n[*] Saindo...")
 		serverSocket.Close()
 		os.Exit(0)
@@ -43,12 +51,27 @@ func main() {
 			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
 			continue
 		}
-		clientNumber++
-		go handleClient(clientSocket, clientNumber) //TO-DO: implementar limitador de conexões
+
+		if theater.IsThereRoom() {
+			clientNumber++
+			go handleClient(clientSocket, clientNumber, theater)
+		} else {
+			go sendToQueue(clientSocket, queue)
+		}
+
 	}
 }
 
-func handleClient(clientSocket net.Conn, clientNumber int) {
+func sendToQueue(clientSocket net.Conn, queue *Queue) {
+	defer clientSocket.Close()
+	clientSocket.Write(toBytesSlice("O teatro está cheio! Fique na fila e você já entra"))
+
+	fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
+
+	queue.Enqueue(clientSocket.RemoteAddr())
+}
+
+func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	defer clientSocket.Close()
 	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
 
@@ -88,6 +111,8 @@ func handleClient(clientSocket net.Conn, clientNumber int) {
 	clientSocket.Write(toBytesSlice(punchline))
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
+
+	theater.peopleInRoom -= 1
 }
 
 func toBytesSlice(str string) []byte {
