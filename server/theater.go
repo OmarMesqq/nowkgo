@@ -13,3 +13,7 @@ func (theater *Theater) Leave(observer *Observer) {
 	theater.peopleInRoom -= 1
 	observer.NotifyExit()
 }
+
+func (theater *Theater) Enter() {
+	theater.peopleInRoom += 1
+}
