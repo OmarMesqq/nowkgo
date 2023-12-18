@@ -9,8 +9,12 @@ import (
 	"time"
 )
 
-func bytes(str string) []byte {
-	return []byte(str)
+func bytes(strs ...string) []byte {
+	var result string
+	for _, str := range strs {
+		result += str
+	}
+	return []byte(result)
 }
 
 func createServer(port int) (net.Listener, int) {
