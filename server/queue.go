@@ -18,6 +18,10 @@ func (queue *Queue) Dequeue() net.Conn {
 	}
 
 	nextInLine := queue.people[0]
-	queue.people = queue.people[:1]
+	queue.people = queue.people[1:]
 	return nextInLine
+}
+
+func (queue *Queue) IsEmpty() bool {
+	return len(queue.people) == 0
 }
