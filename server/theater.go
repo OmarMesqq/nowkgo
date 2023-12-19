@@ -13,9 +13,10 @@ func (theater *Theater) IsThereRoom() bool {
 
 func (theater *Theater) Leave() {
 	theater.peopleInRoom -= 1
-	if theater.IsThereRoom() {
-		theater.ready <- true
+	if theater.queue.IsEmpty() {
+		return
 	}
+	theater.ready <- true
 }
 
 func (theater *Theater) Enter() {
