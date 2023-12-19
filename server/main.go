@@ -119,7 +119,7 @@ func main() {
 		} else {
 			clientSocket.Write(bytes("O teatro está cheio! Você está na fila e já entra", "\n"))
 			queue.Enqueue(clientSocket)
-			fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
+			fmt.Printf("Cliente %s entrou na fila\n", clientSocket.RemoteAddr())
 			go getInQueue(clientSocket, theater)
 		}
 	}
