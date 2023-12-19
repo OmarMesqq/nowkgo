@@ -67,9 +67,9 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 
 	clientSocket.Write(bytes(punchline, "\n"))
 
-	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
-
 	theater.Leave()
+
+	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 }
 
 func getInQueue(clientSocket net.Conn, theater *Theater) {
