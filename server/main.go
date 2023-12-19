@@ -35,7 +35,7 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
 
-	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", clientNumber, clientSocket.RemoteAddr())
+	fmt.Printf("[T] Cliente %d entrou no teatro\n", clientNumber)
 
 	clientSocket.Write(bytes("Toc Toc", "\n")) // começa a interação
 
@@ -49,7 +49,7 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
 		return
 	}
-	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(bytes(intro, "\n")) // primeira parte da piada
 
@@ -63,19 +63,19 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
 		return
 	}
-	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(bytes(punchline, "\n"))
 
 	theater.Leave()
 
-	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
+	fmt.Printf("[T] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 }
 
-func getInQueue(clientSocket net.Conn, theater *Theater) {
+func getInQueue(clientSocket net.Conn, theater *Theater, clientNumber int) {
 	<-theater.ready
 	nextInLine := theater.queue.Dequeue()
-	go handleClient(nextInLine, -1, theater)
+	go handleClient(nextInLine, clientNumber, theater)
 }
 
 func main() {
@@ -119,8 +119,8 @@ func main() {
 		} else {
 			clientSocket.Write(bytes("O teatro está cheio! Você está na fila e já entra", "\n"))
 			queue.Enqueue(clientSocket)
-			fmt.Printf("Cliente %s entrou na fila\n", clientSocket.RemoteAddr())
-			go getInQueue(clientSocket, theater)
+			fmt.Printf("[F] Cliente %d entrou na fila\n", clientNumber)
+			go getInQueue(clientSocket, theater, clientNumber)
 		}
 	}
 }
