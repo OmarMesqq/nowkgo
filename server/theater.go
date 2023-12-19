@@ -3,15 +3,17 @@ package main
 type Theater struct {
 	peopleInRoom       int
 	maxTheaterCapacity int
+	ready              chan bool
+	queue              *Queue
 }
 
 func (theater *Theater) IsThereRoom() bool {
 	return theater.peopleInRoom < theater.maxTheaterCapacity
 }
 
-func (theater *Theater) Leave(observer *Observer) {
+func (theater *Theater) Leave() {
 	theater.peopleInRoom -= 1
-	observer.NotifyExit()
+	theater.ready <- true
 }
 
 func (theater *Theater) Enter() {

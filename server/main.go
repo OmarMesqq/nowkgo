@@ -27,25 +27,17 @@ func createServer(port int) (net.Listener, int) {
 	}
 }
 
-func sendToQueue(clientSocket net.Conn, queue *Queue) {
-	defer clientSocket.Close()
-	clientSocket.Write(bytes("O teatro está cheio! Fique na fila e você já entra"))
-
-	fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
-
-	queue.Enqueue(clientSocket)
-}
-
-func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater, observer *Observer) {
+func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	defer clientSocket.Close()
 	clientSocket.SetDeadline(time.Now().Add(5 * time.Minute))
+	theater.Enter()
 
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
 
 	fmt.Printf("[*] Cliente novo (número %d) no endereço: %s\n", clientNumber, clientSocket.RemoteAddr())
 
-	clientSocket.Write(bytes("Toc Toc")) // começa a interação
+	clientSocket.Write(bytes("Toc Toc", "\n")) // começa a interação
 
 	response, err := clientSocket.Read(clientBuffer) // espera "quem é?"
 	if err != nil {
@@ -59,7 +51,7 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater, obs
 	}
 	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
-	clientSocket.Write(bytes(intro)) // primeira parte da piada
+	clientSocket.Write(bytes(intro, "\n")) // primeira parte da piada
 
 	response, err = clientSocket.Read(clientBuffer) // espera "fulano quem?"
 	if err != nil {
@@ -73,27 +65,29 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater, obs
 	}
 	fmt.Printf("[*] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
 
-	clientSocket.Write(bytes(punchline))
+	clientSocket.Write(bytes(punchline, "\n"))
 
 	fmt.Printf("[*] Conexão com cliente %d terminou com sucesso\n", clientNumber)
 
-	theater.Leave(observer)
+	theater.Leave()
+}
+
+func getInQueue(clientSocket net.Conn, theater *Theater) {
+	<-theater.ready
+	nextInLine := theater.queue.Dequeue()
+	go handleClient(nextInLine, -1, theater)
 }
 
 func main() {
 	port := 9001
 	clientNumber := 0
 
+	queue := &Queue{}
 	theater := &Theater{
 		peopleInRoom:       0,
-		maxTheaterCapacity: 10,
-	}
-
-	queue := &Queue{}
-
-	observer := &Observer{
-		queue:   *queue,
-		theater: *theater,
+		maxTheaterCapacity: 1,
+		ready:              make(chan bool),
+		queue:              queue,
 	}
 
 	serverSocket, port := createServer(port)
@@ -120,16 +114,13 @@ func main() {
 		}
 
 		if theater.IsThereRoom() {
-			if observer.left {
-				next := observer.GetNext()
-				clientNumber++
-				go handleClient(next, clientNumber, theater, observer)
-			} else {
-				clientNumber++
-				go handleClient(clientSocket, clientNumber, theater, observer)
-			}
+			go handleClient(clientSocket, clientNumber, theater)
+			clientNumber++
 		} else {
-			go sendToQueue(clientSocket, queue)
+			clientSocket.Write(bytes("O teatro está cheio! Você está na fila e já entra", "\n"))
+			queue.Enqueue(clientSocket)
+			fmt.Printf("Cliente %s entrou na fila", clientSocket.RemoteAddr())
+			go getInQueue(clientSocket, theater)
 		}
 	}
 }

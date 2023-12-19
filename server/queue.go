@@ -8,8 +8,8 @@ type Queue struct {
 	people []net.Conn
 }
 
-func (queue *Queue) Enqueue(clientAddress net.Conn) {
-	queue.people = append(queue.people, clientAddress)
+func (queue *Queue) Enqueue(clientSocket net.Conn) {
+	queue.people = append(queue.people, clientSocket)
 }
 
 func (queue *Queue) Dequeue() net.Conn {
