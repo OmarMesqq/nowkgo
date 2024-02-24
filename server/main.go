@@ -35,41 +35,41 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
 
-	fmt.Printf("[T] Cliente %d entrou no teatro\n", clientNumber)
+	fmt.Printf("[T] Client %d is in the theater\n", clientNumber)
 
-	clientSocket.Write(bytes("Toc Toc", "\n")) // começa a interação
+	clientSocket.Write(bytes("Knock knock", "\n")) // starts interaction
 
-	response, err := clientSocket.Read(clientBuffer) // espera "quem é?"
+	response, err := clientSocket.Read(clientBuffer) // waits for "who's there?"
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
-			clientSocket.Write(bytes("\nVOCE EXPLODIU!\n"))
-			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
+			clientSocket.Write(bytes("\nKABOOM!\n"))
+			fmt.Printf("[*] Client %d disconnected due to inactivity\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
+		fmt.Printf("[*] Cliente %d closed the connection\n", clientNumber)
 		return
 	}
-	fmt.Printf("[T] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Cliente %d says: %s\n", clientNumber, string(clientBuffer[:response]))
 
-	clientSocket.Write(bytes(intro, "\n")) // primeira parte da piada
+	clientSocket.Write(bytes(intro, "\n")) // joke setup
 
-	response, err = clientSocket.Read(clientBuffer) // espera "fulano quem?"
+	response, err = clientSocket.Read(clientBuffer) // waits for "who?"
 	if err != nil {
 		if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
-			clientSocket.Write(bytes("\nVOCE EXPLODIU!\n"))
-			fmt.Printf("[*] Cliente %d desconectado por inatividade\n", clientNumber)
+			clientSocket.Write(bytes("\nKABOOM!\n"))
+			fmt.Printf("[*] Client %d disconnected due to inactivity\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d encerrou a conexão\n", clientNumber)
+		fmt.Printf("[*] Cliente %d closed the connection\n", clientNumber)
 		return
 	}
-	fmt.Printf("[T] Cliente %d diz: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Cliente %d says: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(bytes(punchline, "\n"))
 
 	theater.Leave()
 
-	fmt.Printf("[T] Conexão com cliente %d terminou com sucesso\n", clientNumber)
+	fmt.Printf("[T] Connection with client %d is successfully finished\n", clientNumber)
 }
 
 func getInQueue(clientSocket net.Conn, theater *Theater, clientNumber int) {
@@ -94,22 +94,22 @@ func main() {
 	defer serverSocket.Close()
 
 	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT) // Avisa quando o usuário apertar Ctrl+C
+	signal.Notify(sigCh, syscall.SIGINT) // Handles Ctrl+C
 	go func() {
 		<-sigCh
 		fmt.Println("\n[*] Saindo...")
 		serverSocket.Close()
-		// fechar sockets dos clientes?
+		// TODO: close client sockets?
 		os.Exit(0)
 	}()
 
-	fmt.Printf("[*] Servidor local ligado na porta %d\n", port)
+	fmt.Printf("[*] Local server on port %d\n", port)
 
-	// Espera por novas conexões
+	// Waits indefinitely  for new connections
 	for {
 		clientSocket, err := serverSocket.Accept()
 		if err != nil {
-			fmt.Printf("[!] Erro ao aceitar nova conexão de %s: %v\n", clientSocket.RemoteAddr(), err)
+			fmt.Printf("[!] Error accepting connnection from %s: %v\n", clientSocket.RemoteAddr(), err)
 			continue
 		}
 
@@ -117,9 +117,9 @@ func main() {
 			go handleClient(clientSocket, clientNumber, theater)
 			clientNumber++
 		} else {
-			clientSocket.Write(bytes("O teatro está cheio! Você está na fila e já entra", "\n"))
+			clientSocket.Write(bytes("The theater is full! You are in line and will be in a moment.", "\n"))
 			queue.Enqueue(clientSocket)
-			fmt.Printf("[F] Cliente %d entrou na fila\n", clientNumber)
+			fmt.Printf("[F] Client %d in line\n", clientNumber)
 			go getInQueue(clientSocket, theater, clientNumber)
 		}
 	}
