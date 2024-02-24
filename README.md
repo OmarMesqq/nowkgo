@@ -1,4 +1,4 @@
-## A knock-knock like socket server  for hearing (unfunny) jokes
+## A knock-knock like socket server for appreciating (unfunny) jokes
 
 ## Use instructions:
 
