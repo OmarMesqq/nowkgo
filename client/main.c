@@ -11,21 +11,19 @@
 #define PORT 9001
 
 
-static void getClientBuffer(char* client_buffer, size_t buffer_size, int client_socket);
+static void getClientBuffer(char* client_buffer, int buffer_size, int client_socket);
 static void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_size);
 static int setupClient(void);
 static struct sockaddr_in setupServer(void);
 
 int main(void) {
   char client_buffer[MAX_INPUT_SIZE] = {0};  // stores client-side entered text
-  size_t client_buffer_size = sizeof(client_buffer);
   int client_socket = setupClient();
 
-  char server_buffer[1024] = {0};  // stores received messages
-  size_t server_buffer_size = sizeof(server_buffer);
+  char server_buffer[MAX_INPUT_SIZE] = {0};  // stores received messages
   struct sockaddr_in server_address = setupServer();
 
-  printf("Welcome to the joke theater! You have five minutes between interactions before exploding :)\n");
+  printf("\nWelcome to the joke theater! You have five minutes between interactions before exploding :)\n");
 
   if (inet_pton(AF_INET, HOST, &server_address.sin_addr) <= 0) {
     perror("[!] Invalid IP address. Check it again.");
@@ -38,23 +36,23 @@ int main(void) {
   }
 
   while (1) {
-    displayServerBuffer(client_socket, server_buffer, server_buffer_size);
+    displayServerBuffer(client_socket, server_buffer, MAX_INPUT_SIZE);
 
     printf("> ");
-    getClientBuffer(client_buffer, client_buffer_size, client_socket);
+    getClientBuffer(client_buffer, MAX_INPUT_SIZE, client_socket);
 
-    displayServerBuffer(client_socket, server_buffer, server_buffer_size);
+    displayServerBuffer(client_socket, server_buffer, MAX_INPUT_SIZE);
 
     printf("> ");
-    getClientBuffer(client_buffer, client_buffer_size, client_socket);
+    getClientBuffer(client_buffer, MAX_INPUT_SIZE, client_socket);
 
-    displayServerBuffer(client_socket, server_buffer, server_buffer_size);
+    displayServerBuffer(client_socket, server_buffer, MAX_INPUT_SIZE);
 
     break;
   }
 
   close(client_socket);
-  printf("\nThank you for your time!\n");
+  printf("Thank you for your time!\n");
   return 0;
 }
 
@@ -94,7 +92,7 @@ static void displayServerBuffer(int client_socket, char* server_buffer, size_t b
   printf("%s\n", server_buffer);
 }
 
-static void getClientBuffer(char* client_buffer, size_t buffer_size, int client_socket) {
+static void getClientBuffer(char* client_buffer, int buffer_size, int client_socket) {
   if (fgets(client_buffer, buffer_size, stdin) == NULL) {
     return;
   }

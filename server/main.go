@@ -46,10 +46,10 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 			fmt.Printf("[*] Client %d disconnected due to inactivity\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d closed the connection\n", clientNumber)
+		fmt.Printf("[*] Client %d closed the connection\n", clientNumber)
 		return
 	}
-	fmt.Printf("[T] Cliente %d says: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Client %d says: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(bytes(intro, "\n")) // joke setup
 
@@ -60,10 +60,10 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 			fmt.Printf("[*] Client %d disconnected due to inactivity\n", clientNumber)
 			return
 		}
-		fmt.Printf("[*] Cliente %d closed the connection\n", clientNumber)
+		fmt.Printf("[*] Client %d closed the connection\n", clientNumber)
 		return
 	}
-	fmt.Printf("[T] Cliente %d says: %s\n", clientNumber, string(clientBuffer[:response]))
+	fmt.Printf("[T] Client %d says: %s\n", clientNumber, string(clientBuffer[:response]))
 
 	clientSocket.Write(bytes(punchline, "\n"))
 
