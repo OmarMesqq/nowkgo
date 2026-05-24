@@ -7,8 +7,9 @@
 #include <unistd.h>
 
 #define MAX_INPUT_SIZE 1024
+#define HOST "127.0.0.1"
+#define PORT 9001
 
-static const char HOST[10] = "127.0.0.1";
 
 static void getClientBuffer(char* client_buffer, size_t buffer_size, int client_socket);
 static void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_size);
@@ -16,11 +17,11 @@ static int setupClient(void);
 static struct sockaddr_in setupServer(void);
 
 int main(void) {
-  char client_buffer[MAX_INPUT_SIZE];  // stores text entered in the client side
+  char client_buffer[MAX_INPUT_SIZE] = {0};  // stores client-side entered text
   size_t client_buffer_size = sizeof(client_buffer);
   int client_socket = setupClient();
 
-  char server_buffer[1024] = {0};  // initializes buffer for received messages to all zeroes
+  char server_buffer[1024] = {0};  // stores received messages
   size_t server_buffer_size = sizeof(server_buffer);
   struct sockaddr_in server_address = setupServer();
 
@@ -60,7 +61,7 @@ int main(void) {
 static struct sockaddr_in setupServer(void) {
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
-  server_address.sin_port = htons(9001);  // Ensures port number is Big Endian (network byte order)
+  server_address.sin_port = htons(PORT);  // Ensures port number is Big Endian (network byte order)
   return server_address;
 }
 

@@ -97,7 +97,7 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGINT) // Handles Ctrl+C
 	go func() {
 		<-sigCh
-		fmt.Println("\n[*] Saindo...")
+		fmt.Println("\n[*] Exiting...")
 		serverSocket.Close()
 		// TODO: close client sockets?
 		os.Exit(0)

@@ -8,11 +8,11 @@
 
 #### Setup the server
 1) `cd server`
-2) Compile it: `go build -o server` 
+2) Compile it: `go build -o server.out` 
 3) Run it: `./server`
 
 #### Setup the client
 1) `cd client` 
-2) Compile it: `gcc -o client main.c`
+2) Compile it: `gcc -o client.out main.c`
 3) Run it: `./client`
 
