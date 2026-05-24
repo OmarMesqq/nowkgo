@@ -69,8 +69,8 @@ static struct sockaddr_in setupServer(void) {
 }
 
 static int setupClient(void) {
-  int client_socket;                                // Client descriptor
-  client_socket = socket(AF_INET, SOCK_STREAM, 0);  // IPv4, stream oriented, and TCP
+  int client_socket;
+  client_socket = socket(AF_INET, SOCK_STREAM, 0);  // IPv4, stream oriented (TCP)
 
   if (client_socket == -1) {
     perror("[!] Couldn't create client socket.");
@@ -80,7 +80,8 @@ static int setupClient(void) {
 }
 
 static void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_size) {
-  ssize_t bytes_received;  // plataform independent: contains maximum allowed size for I/O
+  // plataform independent: contains maximum allowed size for I/O
+  ssize_t bytes_received;
   bytes_received = recv(client_socket, server_buffer, buffer_size - 1, 0);
 
   if (bytes_received <= 0) {
