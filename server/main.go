@@ -35,7 +35,13 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 	intro, punchline := getJoke()
 	clientBuffer := make([]byte, 1024)
 
-	fmt.Printf("[T] Client %d is in the theater\n", clientNumber)
+	_, port, err := net.SplitHostPort(clientSocket.RemoteAddr().String())
+	if err != nil {
+		fmt.Println("Error splitting host/port of client:", err)
+		fmt.Printf("[T] Client %d is in the theater\n", clientNumber)
+	} else {
+		fmt.Printf("[T] Client at port %s is in the theater\n", port)
+	}
 
 	clientSocket.Write(bytes("Knock knock", "\n")) // starts interaction
 
@@ -103,7 +109,7 @@ func main() {
 		os.Exit(0)
 	}()
 
-	fmt.Printf("[*] Local server on port %d\n", port)
+	fmt.Printf("[*] Sitcom theather running on port %d\n", port)
 
 	// Waits indefinitely  for new connections
 	for {
