@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,6 @@
 #define MAX_INPUT_SIZE 1024
 #define HOST "127.0.0.1"
 #define PORT 9001
-
 
 static void getClientBuffer(char* client_buffer, int buffer_size, int client_socket);
 static void displayServerBuffer(int client_socket, char* server_buffer, size_t buffer_size);
@@ -30,8 +30,13 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
 
-  if (connect(client_socket, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
-    perror("[!] Couldn't connect to server.");
+  if (connect(client_socket, (struct sockaddr*)&server_address, sizeof(server_address)) != 0) {
+    fprintf(stderr, "[!] Couldn't connect to server. Reason: ");
+    if (errno == ECONNREFUSED) {
+      fprintf(stderr, "Connection refused. Theater probably isn't open.\n");
+    } else {
+      fprintf(stderr, "Unknown error: %d\n", errno);
+    }
     exit(EXIT_FAILURE);
   }
 
