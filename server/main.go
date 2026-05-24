@@ -53,6 +53,7 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 			return
 		}
 		fmt.Printf("[*] Client %d closed the connection\n", clientNumber)
+		theater.Leave()
 		return
 	}
 	fmt.Printf("[T] Client %d says: %s\n", clientNumber, string(clientBuffer[:response]))
@@ -67,6 +68,7 @@ func handleClient(clientSocket net.Conn, clientNumber int, theater *Theater) {
 			return
 		}
 		fmt.Printf("[*] Client %d closed the connection\n", clientNumber)
+		theater.Leave()
 		return
 	}
 	fmt.Printf("[T] Client %d says: %s\n", clientNumber, string(clientBuffer[:response]))
