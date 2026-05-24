@@ -63,7 +63,7 @@ int main(void) {
 
 static struct sockaddr_in setupServer(void) {
   struct sockaddr_in server_address;
-  server_address.sin_family = AF_INET;
+  server_address.sin_family = AF_INET;    // IPv4
   server_address.sin_port = htons(PORT);  // Ensures port number is Big Endian (network byte order)
   return server_address;
 }
@@ -101,7 +101,16 @@ static void getClientBuffer(char* client_buffer, int buffer_size, int client_soc
   if (fgets(client_buffer, buffer_size, stdin) == NULL) {
     return;
   }
-  client_buffer[strcspn(client_buffer, "\n")] = '\0';
+
+  size_t clientMsgLen = strcspn(client_buffer, "\n");
+
+  if (client_buffer[clientMsgLen] != '\n') {
+    fprintf(stderr, "Your message is just too long...\n");
+    close(client_socket);
+    exit(-1);
+  }
+
+  client_buffer[clientMsgLen] = '\0';
   if (strcmp(client_buffer, "exit") == 0) {
     return;
   }
