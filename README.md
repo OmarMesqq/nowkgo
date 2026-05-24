@@ -13,6 +13,6 @@
 
 #### Setup the client
 1) `cd client` 
-2) Compile it: `gcc -o client client.c`
+2) Compile it: `gcc -o client main.c`
 3) Run it: `./client`
 
